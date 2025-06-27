@@ -1,0 +1,10 @@
+{% extends "order/layout.html" %}
+{% load static %}
+
+{% block script %}
+    <script src="{% static 'order/item.js' %}"></script>
+{% endblock %}
+
+{% block body %}
+    <div id="item-container"></div>
+{% endblock %}
