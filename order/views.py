@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
-from .models import Order, MenuItem
+from .models import MenuItem
 
 # Create your views here.
 def index(request):
@@ -14,6 +14,9 @@ def menu_item(request, slug):
     return render(request, "order/menu_item.html", {
         "slug": slug
     })
+
+def cart(request):
+    return render(request, "order/cart.html")
 
 # API HANDLERS
 

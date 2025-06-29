@@ -6,6 +6,8 @@
         <title>JOBAKESGREAT</title>
         <link rel="stylesheet" href="{% static 'order/styles.css' %}">
         <h1>JOBAKESGREAT.</h1>
+        <a href="{% url 'menu' %}">home</a>
+        <a href="{% url 'cart' %}">your cart here</a>
         {% block script %}
         {% endblock %}
     </head>
