@@ -2,9 +2,12 @@
 {% load static %}
 
 {% block script %}
+    <script type="module" src="{% static 'order/pages/cart.js' %}"></script>
 {% endblock %}
 
 {% block body %}
+    <h1>Your Cart</h1>
+    <div id="cart-container"></div>
     <a href="{% url 'menu' %}">
         <button>See Menu</button>
     </a>
