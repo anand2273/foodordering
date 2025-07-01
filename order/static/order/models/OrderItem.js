@@ -57,7 +57,7 @@ export class OrderItem {
     // data field is formatted in JSON, includes the quantity field.
     static fromJSON(data) {
         return new OrderItem({
-            menuItem: MenuItem.fromJSON(data.item),
+            menuItem: MenuItem.fromJSON(data.menuItem),
             quantity: data.quantity
         })
     }

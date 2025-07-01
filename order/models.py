@@ -36,13 +36,15 @@ class Order(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     student_name = models.CharField(max_length=100)
     timestamp = models.DateTimeField(default=timezone.now)
+    fulfilled = models.BooleanField(default=False);
 
     def serialize(self):
         return {
             "id": str(self.id),
             "student_name": self.student_name,
             "timestamp": self.timestamp.isoformat(),
-            "items": [item.serialize() for item in self.items.all()],   
+            "items": [item.serialize() for item in self.items.all()],  
+            "fulfilled": self.fulfilled 
         }
 
 class OrderItem(models.Model):
@@ -52,7 +54,7 @@ class OrderItem(models.Model):
 
     def serialize(self):
         return {
-            "menuItem": self.menuItem.serialize(),
-            "quantity": self.quantity
+            "quantity": self.quantity,
+            "menuItem": self.menuItem.serialize()
         }
     
