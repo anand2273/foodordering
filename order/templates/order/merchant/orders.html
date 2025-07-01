@@ -1,0 +1,16 @@
+{% load static %}
+<!DOCTYPE html>
+<head>
+    <script type="module" src="{% static 'order/pages/orders.js' %}"></script>
+</head>
+<body>
+    <h1>Orders</h1>
+    <div class="toggle-orders">
+        <button id="btn-all-orders">All Orders</button>
+        <button id="btn-fulfilled">Fulfilled</button>
+        <button id="btn-unfulfilled">Unfulfilled</button>
+    </div>
+    <div class="hidden"></div>
+    <div class="orders-specific"></div>
+
+</body>
