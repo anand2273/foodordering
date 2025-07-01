@@ -110,3 +110,10 @@ body {
     }
 }
 
+.modal.hidden {
+  display: none;
+}
+/* Add more styles to center the modal, background blur, etc. */
+
+
+

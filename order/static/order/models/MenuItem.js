@@ -15,10 +15,10 @@ export class MenuItem extends Item {
         };
     }
 
-    /*
-    Renders a HTML card for the Menu Item in the menu itself.
-    classname of card div: menu-item
-    */
+    /**
+     * @returns A HTML div for the Menu Item in the menu itself.
+     * @description (Styling) 'div' className: 'menu-item'
+     */
     menuRender() {
         const div = document.createElement('div');
         div.className = 'menu-item';
@@ -34,10 +34,13 @@ export class MenuItem extends Item {
         return div;
     }
 
-    /*
-    Renders a HTML card for the Menu Item in the menu itself.
-    classname of card div: menu-item
-    */
+    /**
+     * @param {HTML div} container 
+     * @description 
+     * Populates the container with HTML to display
+     * the item on the item page.
+     * (Styling) "Add to cart" button id: add_to_cart
+     */
     itemRender(container) {
         container.innerHTML = `
             <img src="${this.img}" style="width: 100%; max-height: 300px; object-fit: cover; border-radius: 12px;">

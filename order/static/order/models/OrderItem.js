@@ -12,7 +12,7 @@ export class OrderItem {
     get slug()  { return this.menuItem.slug; }
     get desc()  { return this.menuItem.desc; }
     get img()   { return this.menuItem.img; }
-    
+
     subTotal() {
         return this.quantity * this.price;
     }
@@ -21,7 +21,10 @@ export class OrderItem {
     return this.menuItem.formatPrice();
     }
 
-
+    /**
+     * @description Consists of functions to add, remove and delete items from the cart.
+     * @returns a HTML 'div' element for the item in the cart page. 
+     */
     render() {
         const div = document.createElement('div');
         div.className = 'cart-item';
@@ -41,6 +44,10 @@ export class OrderItem {
         return div;
     }
 
+
+    /*
+    Converts a Javascript Object to JSON for sending requests to backend.
+    */
     toJSON() {
         return {
             item: this.menuItem.toJSON(),

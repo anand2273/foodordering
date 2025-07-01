@@ -8,5 +8,6 @@ urlpatterns = [
     path("cart/", views.cart, name="cart"),
     # API Routes
     path("api/menu/", views.api_menu, name="api_menu"),
-    path("api/menu-item/<slug:slug>/", views.item, name="item")
+    path("api/menu-item/<slug:slug>/", views.item, name="item"),
+    path("api/place-order/", views.place_order, name="place_order")
 ]
