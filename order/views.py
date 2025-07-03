@@ -6,18 +6,8 @@ import json
 from django.views.decorators.csrf import csrf_exempt
 from .models import MenuItem, OrderItem, Order
 from django.contrib.auth import authenticate, login, logout
+
 # Create your views here.
-def index(request):
-    return render(request, "order/index.html")
-
-def menu(request):
-    return render(request, "order/menu.html")
-
-def menu_item(request, slug):
-    return render(request, "order/menu_item.html", {
-        "slug": slug
-    })
-
 def cart(request):
     return render(request, "order/cart.html")
 
