@@ -13,15 +13,9 @@ export default function MenuItemPage() {
         .then(res => setItem(res.data))
         .catch(() => setError("item could not be loaded"));
     }, [slug]);
-
-    const handleAddToCart = item => {
-        //TODO: add cart logic here
-        console.log(`${item.title} added to cart`);
-        alert(`${item.title} added to cart`);
-    }
-    
+        
     if (error) return <p>{error}</p>;
     if (!item) return <p>Loading...</p>;
 
-    return <MenuItemDetail item={item} onAddToCart={handleAddToCart} />
+    return <MenuItemDetail item={item} />
 }
