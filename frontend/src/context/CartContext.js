@@ -9,7 +9,7 @@ export function Cart({ children }) {
     });
 
     console.log("Cart contents: ", cart);
-    useEffect(() => localStorage.setItem("cart", JSON.stringify(cart)));
+    useEffect(() => localStorage.setItem("cart", JSON.stringify(cart)), [cart]);
 
     const addToCart = (item) => {
         setCart(prev => {
@@ -45,10 +45,12 @@ export function Cart({ children }) {
             .filter(i => i.quantity > 0)
         );
     
+    const clear = () => setCart([]);
+    
 
     return (
-    <CartContext value={{ cart, addToCart, removeFromCart, increment, decrement }}>
+    <CartContext.Provider value={{ cart, addToCart, removeFromCart, increment, decrement, clear }}>
         {children}
-    </CartContext>
+    </CartContext.Provider>
     )
 }
