@@ -8,8 +8,6 @@ from .models import MenuItem, OrderItem, Order
 from django.contrib.auth import authenticate, login, logout
 
 # Create your views here.
-def cart(request):
-    return render(request, "order/cart.html")
 
 # Merchant Side
 def login_view(request):

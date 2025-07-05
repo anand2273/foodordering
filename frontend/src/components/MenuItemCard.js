@@ -30,6 +30,10 @@ export function MenuItemDetail({ item }) {
 
 export function CartItemCard({ item }) {
     const {cart, addToCart, removeFromCart, increment, decrement} = useContext(CartContext);
+    
+    if (!item) {
+        return null;
+    } 
     return (
         <div>
             <img src={item.img} alt={item.title} />
@@ -44,4 +48,8 @@ export function CartItemCard({ item }) {
         </div>
 
     )
+}
+
+export function OrderItemCart({ item }) {
+    return;
 }
