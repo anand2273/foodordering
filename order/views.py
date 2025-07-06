@@ -6,38 +6,17 @@ import json
 from django.views.decorators.csrf import csrf_exempt
 from .models import MenuItem, OrderItem, Order
 from django.contrib.auth import authenticate, login, logout
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 
-# Create your views here.
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def merchant_orders(request):
+    # You'll probably want to filter orders here
+    return Response({"message": f"Hello, {request.user.username}, here are your orders."})
 
-# Merchant Side
-def login_view(request):
-    if request.method == "POST":
-
-        # Attempt to sign user in
-        name = request.POST["name"]
-        password = request.POST["password"]
-        user = authenticate(request, username=name, password=password)
-
-        # Check if authentication successful
-        if user is not None:
-            login(request, user)
-            return HttpResponseRedirect(reverse("orders"))
-        else:
-            return render(request, "order/merchant/login.html", {
-                "message": "Invalid email and/or password."
-            })
-    else:
-        return render(request, "order/merchant/login.html")
-    
-def logout_view(request):
-    logout(request)
-    return HttpResponseRedirect(reverse("index"))
-    
-def merchant_index(request):
-    if request.user.is_authenticated:
-        return render(request, "order/merchant/orders.html")
-    else:
-        return HttpResponseRedirect(reverse("login"))
 
 # API HANDLERS
 
@@ -77,7 +56,7 @@ def place_order(request):
 
     order = Order.objects.create(student_name=student_name)
     for item in items:
-        slug = item.get("item", {}).get("slug")
+        slug = item.get("slug")
         quantity = item.get("quantity")
         if not slug or not quantity:
             continue
@@ -93,13 +72,41 @@ def place_order(request):
         "timestamp": order.timestamp.isoformat()
         }, status=200)
 
-def orders(request):
-    return render(request, 'order/merchant/orders.html')
-
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def display_orders(request):
     orders = Order.objects.all()
     data = [order.serialize() for order in orders]
     return JsonResponse(data, safe=False)
+
+@api_view(["GET"])
+@permission_classes([AllowAny]) 
+def get_order_by_id(request, order_id):
+    try:
+        order = Order.objects.get(id=order_id)
+        return JsonResponse(order.serialize())
+    except Order.DoesNotExist:
+        return JsonResponse({"error": "Order not found"}, status=404)
+    
+@api_view(["PATCH"])
+def toggle_order_ready(request, order_id):
+    try:
+        order = Order.objects.get(id=order_id)
+        order.ready = request.data.get("ready", not order.ready)
+        order.save()
+        return JsonResponse({"message": "Order updated", "ready": order.ready})
+    except Order.DoesNotExist:
+        return JsonResponse({"error": "Order not found"}, status=404)
+
+@api_view(["PATCH"])
+def toggle_order_fulfilled(request, order_id):
+    try:
+        order = Order.objects.get(id=order_id)
+        order.fulfilled = request.data.get("fulfilled", not order.ready)
+        order.save()
+        return JsonResponse({"message": "Order updated", "fulfilled": order.fulfilled})
+    except Order.DoesNotExist:
+        return JsonResponse({"error": "Order not found"}, status=404)
 
     
         

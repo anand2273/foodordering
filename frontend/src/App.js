@@ -1,29 +1,58 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import MenuPage from './pages/MenuPage';
 import MenuItemPage from './pages/MenuItemPage';
 import CartPage from "./pages/CartPage";
+import MerchantLogin from "./pages/MerchantLogin";
+import MerchantOrders from "./pages/MerchantOrders";
 import { Cart } from "./context/CartContext";
+import { useAuth } from "./context/AuthContext";
 import Navbar from "./components/NavBar";
+import ActiveOrderPage from "./pages/ActiveOrderPage";
 
-
-function App() {
+function LayoutWithNavbar({ children }) {
   return (
     <Cart>
-        <BrowserRouter>
-            <div>
-                <h1>
-                    FOOD ORDERING APPLICATION
-                </h1>
-                <Navbar />
-            </div>
-            <Routes>
-                <Route path="/" element={<MenuPage />} />
-                <Route path="/menu/:slug" element={<MenuItemPage />} />
-                <Route path="/cart" element={<CartPage />} />
-            </Routes>
-        </BrowserRouter>
+      <div>
+        <h1>FOOD ORDERING APPLICATION</h1>
+        <Navbar />
+        {children}
+      </div>
     </Cart>
   );
 }
 
-export default App;
+function AppRoutes() {
+  const location = useLocation();
+  const { isMerchantLoggedIn } = useAuth();
+
+  const isMerchantRoute = location.pathname.startsWith("/merchant");
+
+  return (
+    <Routes>
+      {/* USER SIDE */}
+      <Route path="/" element={<LayoutWithNavbar><MenuPage /></LayoutWithNavbar>} />
+      <Route path="/menu/:slug" element={<LayoutWithNavbar><MenuItemPage /></LayoutWithNavbar>} />
+      <Route path="/cart" element={<LayoutWithNavbar><CartPage /></LayoutWithNavbar>} />
+
+      {/* MERCHANT SIDE */}
+      <Route path="/merchant/login" element={<MerchantLogin />} />
+      <Route
+        path="/merchant/orders"
+        element={
+          isMerchantLoggedIn
+            ? <MerchantOrders />
+            : <Navigate to="/merchant/login" replace />
+        }
+      />
+      <Route path="/active-order" element={<ActiveOrderPage />} />
+    </Routes>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AppRoutes />
+    </BrowserRouter>
+  );
+}
