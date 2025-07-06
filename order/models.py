@@ -36,7 +36,8 @@ class Order(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     student_name = models.CharField(max_length=100)
     timestamp = models.DateTimeField(default=timezone.now)
-    fulfilled = models.BooleanField(default=False);
+    ready = models.BooleanField(default=False)
+    fulfilled = models.BooleanField(default=False)
 
     def serialize(self):
         return {
@@ -44,6 +45,7 @@ class Order(models.Model):
             "student_name": self.student_name,
             "timestamp": self.timestamp.isoformat(),
             "items": [item.serialize() for item in self.items.all()],  
+            "ready": self.ready,
             "fulfilled": self.fulfilled 
         }
 
@@ -53,8 +55,11 @@ class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items', null=True, blank=True)
 
     def serialize(self):
+        menu = self.menuItem
         return {
             "quantity": self.quantity,
-            "menuItem": self.menuItem.serialize()
+            "title": menu.title,
+            "price": menu.price,
+            "slug": menu.slug
         }
     

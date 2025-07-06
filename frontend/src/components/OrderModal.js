@@ -1,59 +1,76 @@
 import { useState, useContext } from "react";
 import { CartContext } from "../context/CartContext";
-import Button from 'react-bootstrap/Button'
-import Modal from 'react-bootstrap/Modal'
-import Form from 'react-bootstrap/Form'
 import { placeOrder } from "../services/orderServices";
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
+import Form from "react-bootstrap/Form";
 
 export default function ModalForm() {
-    const [show, setShow] = useState(false);
-    const [name, setName] = useState("");
+  const [show, setShow] = useState(false);
+  const [name, setName] = useState("");
+  const { cart, clear } = useContext(CartContext);
 
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+  const hasActiveOrder = !!localStorage.getItem("activeOrderId");
 
-    const { cart } = useContext(CartContext);
-    const handleSubmit = async () => {
-        if (!name.trim()) {
-            alert("Please enter your name");
-            return;
-        }
-        try {
-            await placeOrder(name, cart);
-            alert("Order placed");
-            setName("");
-            handleClose();
-        } catch (err) {
-            console.error(err);
-            alert("Failed to place order");
-        }
+  const handleOpen = () => {
+    if (hasActiveOrder) {
+      alert("You already have an active order. Please wait until it's fulfilled before placing another.");
+      return;
+    }
+    setShow(true);
+  };
+
+  const handleClose = () => {
+    setShow(false);
+    setName("");
+  };
+
+  const handleSubmit = async () => {
+    if (!name.trim()) {
+      alert("Please enter your name");
+      return;
     }
 
-    return (
-        <>
-        <Button onClick={handleShow}>Place Order</Button>
+    try {
+      const res = await placeOrder(name, cart);
+      const orderId = res.data.order_id;
+      localStorage.setItem("activeOrderId", orderId); // For ActiveOrderPage
+      alert("Order placed!");
+      clear(); // Optional: clear cart
+      handleClose();
+    } catch (err) {
+      console.error("Error placing order:", err);
+      alert("Failed to place order. Please try again.");
+    }
+  };
 
-        <Modal show={show} onHide={handleClose}>
-            <Modal.Header closeButton>
-                <Modal.Title>Place your Order!</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                <input
-                    value={name}
-                    onChange={e => setName(e.target.value)}
-                    placeholder="Enter name"
-                />
-            </Modal.Body>
-            <Modal.Footer>
-                <Button variant="secondary" onClick={handleClose}>
-                    Close
-                </Button>
-                <Button variant="primary" onClick={handleSubmit}>
-                    Submit
-                </Button>
-            </Modal.Footer>
-        </Modal>
-        </>
-    )
+  return (
+    <>
+      <Button onClick={handleOpen} disabled={hasActiveOrder}>
+        Place Order
+      </Button>
 
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Place Your Order</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Control
+            type="text"
+            placeholder="Enter your name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={handleSubmit}>
+            Submit
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
+  );
 }
