@@ -12,14 +12,21 @@ import ActiveOrderPage from "./pages/ActiveOrderPage";
 function LayoutWithNavbar({ children }) {
   return (
     <Cart>
-      <div>
-        <h1>FOOD ORDERING APPLICATION</h1>
+      <div
+        className="fixed inset-0 bg-cover bg-center z-0"
+        style={{ backgroundImage: "url('/bg.jpg')" }}
+      />
+      <div className="relative z-10 min-h-screen bg-white/80 backdrop-blur-sm">
         <Navbar />
-        {children}
+        <main className="max-w-5xl mx-auto px-4 py-8">
+          {children}
+        </main>
       </div>
     </Cart>
   );
 }
+
+
 
 function AppRoutes() {
   const location = useLocation();
