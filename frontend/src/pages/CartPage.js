@@ -1,29 +1,39 @@
 import { useContext } from "react";
-import { useEffect, useState } from "react"
-import { getMenuItems } from "../services/menuServices"
-import { CartItemCard } from "../components/MenuItemCard"
 import { CartContext } from "../context/CartContext";
+import { CartItemCard } from "../components/MenuItemCard";
 import ModalForm from "../components/OrderModal";
 
 export default function CartPage() {
-    const { cart } = useContext(CartContext);
-    
-    return (
-        <div>
-            <h1>Your Cart</h1>
-            {
-                cart.length === 0 
-                ? <p>Your cart is empty. Visit the menu.</p>
-                : cart.map(item => 
-                    <CartItemCard key={item.slug} item={item} />
-                    )
-            }
-            <p>Total price:</p>
-                <strong>
-                    {cart.reduce((sum, item) => sum + item.price * item.quantity, 0)}
-                </strong>
-            <ModalForm />
-        </div>
-    );
+  const { cart } = useContext(CartContext);
 
+  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  return (
+    <div className="max-w-4xl mx-auto px-4 py-8">
+      <h1 className="text-2xl font-bold mb-6 text-gray-800">Your Cart</h1>
+
+      {cart.length === 0 ? (
+        <p className="text-gray-500">Your cart is empty. Visit the menu to add items.</p>
+      ) : (
+        <div className="space-y-4">
+          {cart.map((item) => (
+            <CartItemCard key={item.slug} item={item} />
+          ))}
+        </div>
+      )}
+
+      {cart.length > 0 && (
+        <>
+          <div className="mt-6 text-right">
+            <p className="text-lg font-semibold text-gray-700">Total:</p>
+            <p className="text-2xl font-bold text-blue-600">${total.toFixed(2)}</p>
+          </div>
+
+          <div className="mt-8">
+            <ModalForm />
+          </div>
+        </>
+      )}
+    </div>
+  );
 }
