@@ -13,18 +13,26 @@ export function Cart({ children }) {
 
     const addToCart = (item) => {
         setCart(prev => {
-            const existing = prev.find(i => i.slug === item.slug);
-            if (existing) {
-                return prev.map(i => 
-                    i.slug === item.slug 
-                        ? {...i, quantity: i.quantity + 1}
-                        : i
-                )
-            }
-            return [...prev, {...item, quantity: 1}];
-        });
-        alert(`${item.title} added to cart`);
+        const existing = prev.find(i => 
+        i.slug === item.slug &&
+        JSON.stringify(i.selectedOptions) === JSON.stringify(item.selectedOptions)
+        );
+
+        if (existing) {
+        return prev.map(i => 
+            i.slug === item.slug &&
+            JSON.stringify(i.selectedOptions) === JSON.stringify(item.selectedOptions)
+            ? { ...i, quantity: i.quantity + 1 }
+            : i
+        );
     }
+
+    return [...prev, { ...item, quantity: 1 }];
+  });
+
+  alert(`${item.title} added to cart`);
+};
+
 
     const removeFromCart = slug => {
         setCart(prev => prev.filter(i => i.slug !== slug));

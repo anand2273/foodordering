@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { fetchOrders } from '../services/merchantServices';
-import LogoutButton from '../components/logoutButton';
-import { OrderItemCard } from '../components/MenuItemCard';
+import LogoutButton from '../components/misc/logoutButton';
+import { OrderItemCard } from '../components/order/OrderItemCard';
 
 export default function MerchantOrders() {
   const [orders, setOrders] = useState([]);

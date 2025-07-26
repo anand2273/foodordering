@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getOrderById } from '../services/orderServices';
-import { OrderItemCard } from '../components/MenuItemCard';
-import Navbar from '../components/NavBar';
+import { OrderItemCard } from '../components/order/OrderItemCard';
+import Navbar from '../components/misc/NavBar';
 
 export default function ActiveOrderPage() {
   const [order, setOrder] = useState(null);

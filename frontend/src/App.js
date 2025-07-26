@@ -6,7 +6,7 @@ import MerchantLogin from "./pages/MerchantLogin";
 import MerchantOrders from "./pages/MerchantOrders";
 import { Cart } from "./context/CartContext";
 import { useAuth } from "./context/AuthContext";
-import Navbar from "./components/NavBar";
+import Navbar from "./components/misc/NavBar";
 import ActiveOrderPage from "./pages/ActiveOrderPage";
 
 function LayoutWithNavbar({ children }) {
