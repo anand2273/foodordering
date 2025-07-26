@@ -84,9 +84,14 @@ export function OrderItemCard({ order, isMerchant = false }) {
   const [isFulfilled, setIsFulfilled] = useState(order.fulfilled);
 
   const toggleReady = async () => {
-    try {
+    try {      
       const res = await toggleOrderReady(order.id, !isReady);
+      if (isFulfilled && isReady) {
+        const res2 = await toggleOrderFulfilled(order.id, !isFulfilled);
+        setIsFulfilled(res.data.fulfilled);
+      }
       setIsReady(res.data.ready);
+      
     } catch (err) {
       alert("Could not update readiness.");
     }
@@ -129,7 +134,12 @@ export function OrderItemCard({ order, isMerchant = false }) {
           </button>
           <button
             onClick={toggleFulfilled}
-            className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition"
+            disabled={!isReady}
+            className={`px-3 py-1 rounded transition ${
+              isReady
+                ? "bg-green-600 text-white hover:bg-green-700"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+            }`}
           >
             {isFulfilled ? "Mark as Not Fulfilled" : "Mark as Fulfilled"}
           </button>
