@@ -18,7 +18,7 @@ export default function MerchantOrders() {
 
       try {
         const res = await fetchOrders();
-        setOrders(res.data);
+        setOrders(res.data.filter(o => !o.fulfilled));
       } catch (err) {
         console.error("Error fetching orders:", err);
         alert("You must be logged in to view orders.");

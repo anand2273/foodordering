@@ -1,15 +1,22 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 import json
 from django.views.decorators.csrf import csrf_exempt
-from .models import MenuItem, OrderItem, Order
+from .models import MenuItem, OrderItem, Order, Business
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
+
+def get_business_or_404(slug):
+    try:
+        return Business.objects.get(slug=slug)
+    except:
+        raise Http404("Business not found")
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -20,14 +27,18 @@ def merchant_orders(request):
 
 # API HANDLERS
 
-def api_menu(request):
-    items = MenuItem.objects.all()
+# To fetch the entire menu
+def api_menu(request, business_slug):
+    biz = get_business_or_404(business_slug)
+    items = MenuItem.objects.filter(business=biz)
     data = [item.serialize() for item in items]
     return JsonResponse(data, safe=False)
 
-def item(request, slug):
+# To fetch data pertaining to a particular item
+def item(request, slug, business_slug):
+    biz = get_business_or_404(business_slug)
     try:
-        item = MenuItem.objects.get(slug=slug)
+        item = MenuItem.objects.filter(business=biz).get(slug=slug)
     except MenuItem.DoesNotExist:
         return JsonResponse({"error": "item not found"}, status=400)
     
