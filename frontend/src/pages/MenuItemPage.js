@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { getMenuItemBySlug } from "../services/menuServices";
-import { MenuItemDetail } from "../components/MenuItemCard";
+import { MenuItemDetail } from "../components/menu/MenuItemCard";
 import { useParams } from "react-router-dom";
+
+const business_slug = "its-bubblin"
 
 export default function MenuItemPage() {
     const { slug } = useParams();
@@ -9,7 +11,7 @@ export default function MenuItemPage() {
     const [error, setError] = useState(null);
     
     useEffect(() => {
-        getMenuItemBySlug(slug)
+        getMenuItemBySlug(slug, business_slug)
         .then(res => setItem(res.data))
         .catch(() => setError("item could not be loaded"));
     }, [slug]);

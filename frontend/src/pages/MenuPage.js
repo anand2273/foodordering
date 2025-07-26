@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { getMenuItems } from "../services/menuServices";
-import MenuItemCard from "../components/MenuItemCard";
+import MenuItemCard from "../components/menu/MenuItemCard";
 
 export default function MenuPage() {
   const [items, setItems] = useState([]);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    getMenuItems()
+    getMenuItems("its-bubblin")
       .then(res => setItems(res.data))
       .catch(() => setError("Failed to load menu"));
   }, []);
@@ -24,7 +24,7 @@ export default function MenuPage() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {items.map(item => (
-          <MenuItemCard key={item.id} item={item} />
+          <MenuItemCard key={item.slug} item={item} />
         ))}
       </div>
     </div>

@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { CartContext } from "../context/CartContext";
-import { CartItemCard } from "../components/MenuItemCard";
-import ModalForm from "../components/OrderModal";
+import { CartItemCard } from "../components/cart/CartItemCard";
+import ModalForm from "../components/order/OrderModal";
 
 export default function CartPage() {
   const { cart } = useContext(CartContext);

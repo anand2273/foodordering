@@ -1,6 +1,6 @@
 import { useState, useContext } from "react";
-import { CartContext } from "../context/CartContext";
-import { placeOrder } from "../services/orderServices";
+import { CartContext } from "../../context/CartContext";
+import { placeOrder } from "../../services/orderServices";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
