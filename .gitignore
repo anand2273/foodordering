@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.log
+*.pot
+*.pyc
+
+# Virtual Environment
+venv/
+
+# Django secrets
+.env
+
+# VSCode or IDEs
+.vscode/
+.idea/
+
+# Node.js (frontend)
+node_modules/
+frontend/node_modules/
+frontend/build/
+frontend/dist/
+
+# React build artifacts (if built inside frontend)
+*.cache
+*.parcel-cache
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Excel and data (optional)
+data/*.xlsx
+
+# Coverage / test files
+htmlcov/
+coverage.*
+*.cover
+*.py,cover
+.cache
+.pytest_cache/
+
+# Jupyter / temp notebooks (if used)
+*.ipynb_checkpoints
