@@ -4,15 +4,17 @@ import { CartContext } from "../../context/CartContext";
 import { useState } from 'react';
 import { toggleOrderFulfilled, toggleOrderReady } from '../../services/orderServices';
 
+const business_slug = "its-bubblin"
+
 export function OrderItemCard({ order, isMerchant = false }) {
   const [isReady, setIsReady] = useState(order.ready);
   const [isFulfilled, setIsFulfilled] = useState(order.fulfilled);
 
   const toggleReady = async () => {
     try {      
-      const res = await toggleOrderReady(order.id, !isReady);
+      const res = await toggleOrderReady(order.id, !isReady, business_slug);
       if (isFulfilled && isReady) {
-        const res2 = await toggleOrderFulfilled(order.id, !isFulfilled);
+        const res2 = await toggleOrderFulfilled(order.id, !isFulfilled, business_slug);
         setIsFulfilled(res.data.fulfilled);
       }
       setIsReady(res.data.ready);
@@ -24,7 +26,7 @@ export function OrderItemCard({ order, isMerchant = false }) {
 
   const toggleFulfilled = async () => {
     try {
-      const res = await toggleOrderFulfilled(order.id, !isFulfilled);
+      const res = await toggleOrderFulfilled(order.id, !isFulfilled, business_slug);
       setIsFulfilled(res.data.fulfilled);
     } catch (err) {
       alert("Could not update fulfillment.");
@@ -74,11 +76,20 @@ export function OrderItemCard({ order, isMerchant = false }) {
       <div className="mt-4">
         <p className="font-semibold">Items:</p>
         <ul className="list-disc pl-6">
-          {order.items.map((item, idx) => (
+        {order.items.map((item, idx) => (
             <li key={idx}>
-              {item.title || "Unnamed item"} — x{item.quantity}
+            {item.title || "Unnamed item"} — x{item.quantity}
+            {item.customizations && item.customizations.length > 0 && (
+                <ul className="list-disc pl-4 text-sm text-gray-600">
+                {item.customizations.map((c, i) => (
+                    <li key={i}>
+                    {c.group}: {c.option} {c.extra_cost > 0 && `(+$${c.extra_cost.toFixed(2)})`}
+                    </li>
+                ))}
+                </ul>
+            )}
             </li>
-          ))}
+        ))}
         </ul>
       </div>
     </div>

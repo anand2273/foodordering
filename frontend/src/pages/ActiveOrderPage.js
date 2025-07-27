@@ -3,6 +3,8 @@ import { getOrderById } from '../services/orderServices';
 import { OrderItemCard } from '../components/order/OrderItemCard';
 import Navbar from '../components/misc/NavBar';
 
+const business_slug = "its-bubblin"
+
 export default function ActiveOrderPage() {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -16,7 +18,7 @@ export default function ActiveOrderPage() {
       }
 
       try {
-        const response = await getOrderById(orderId);
+        const response = await getOrderById(orderId, business_slug);
         if (response.data && response.data.id) {
           if (response.data.fulfilled) {
             localStorage.removeItem("activeOrderId");

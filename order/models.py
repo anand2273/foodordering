@@ -98,9 +98,17 @@ class OrderItem(models.Model):
         return {
             "quantity": self.quantity,
             "title": menu.title,
-            "price": menu.price,
-            "slug": menu.slug
+            "price": float(menu.price),
+            "slug": menu.slug,
+            "customizations": [
+                {
+                    "group": sc.option.group.name,
+                    "option": sc.option.name,
+                    "extra_cost": float(sc.option.extra_cost),
+                } for sc in self.selected_customizations.all()
+            ]
         }
+
     
 class SelectedCustomization(models.Model):
     order_item = models.ForeignKey(OrderItem, on_delete=models.CASCADE, related_name="selected_customizations")

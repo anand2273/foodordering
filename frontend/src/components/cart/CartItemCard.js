@@ -54,7 +54,7 @@ export function CartItemCard({ item }) {
             -1
           </button>
           <button
-            onClick={() => removeFromCart(item.slug)}
+            onClick={() => removeFromCart(item.key)}
             className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition"
           >
             Remove

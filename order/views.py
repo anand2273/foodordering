@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.http import JsonResponse, Http404
 import json
 from django.views.decorators.csrf import csrf_exempt
-from .models import MenuItem, OrderItem, Order, Business
+from .models import MenuItem, OrderItem, Order, Business, CustomizationOption, SelectedCustomization
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -48,7 +48,7 @@ def item(request, slug, business_slug):
         return JsonResponse({"error": "GET required"}, status=400)
     
 @csrf_exempt
-def place_order(request):
+def place_order(request, business_slug):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required."})
     try:
@@ -56,24 +56,35 @@ def place_order(request):
     except json.JSONDecodeError:
         return JsonResponse({"error": "Invalid JSON."}, status=400)
     
-    print("received data:", data)
-    
     student_name = data.get("student_name")
-    print(student_name)
     items = data.get("items", [])
 
     if not student_name or not items:
         return JsonResponse({"error": "Missing name or items"}, status=400)
 
-    order = Order.objects.create(student_name=student_name)
+    business = get_business_or_404(business_slug)
+    order = Order.objects.create(student_name=student_name, business=business)
+
     for item in items:
         slug = item.get("slug")
         quantity = item.get("quantity")
-        if not slug or not quantity:
-            continue
-        try: 
-            menu_item = MenuItem.objects.get(slug=slug)
-            OrderItem.objects.create(menuItem=menu_item, quantity=quantity, order=order)
+        selected = item.get("selectedOptions", {})
+
+        try:
+            menu_item = MenuItem.objects.get(slug=slug, business=business)
+            order_item = OrderItem.objects.create(menuItem=menu_item, quantity=quantity, order=order)
+
+            for group_name, options in selected.items():
+                for option in options:
+                    try:
+                        opt_obj = CustomizationOption.objects.get(
+                            name=option["name"],
+                            group__menu_item=menu_item,
+                            group__name=group_name
+                        )
+                        SelectedCustomization.objects.create(order_item=order_item, option=opt_obj)
+                    except CustomizationOption.DoesNotExist:
+                        continue
         except MenuItem.DoesNotExist:
             continue
 
@@ -85,24 +96,27 @@ def place_order(request):
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
-def display_orders(request):
-    orders = Order.objects.all()
+def display_orders(request, business_slug):
+    business = get_business_or_404(business_slug)
+    orders = Order.objects.filter(business=business)
     data = [order.serialize() for order in orders]
     return JsonResponse(data, safe=False)
 
 @api_view(["GET"])
 @permission_classes([AllowAny]) 
-def get_order_by_id(request, order_id):
+def get_order_by_id(request, order_id, business_slug):
+    business = get_business_or_404(business_slug)
     try:
-        order = Order.objects.get(id=order_id)
+        order = Order.objects.get(id=order_id, business=business)
         return JsonResponse(order.serialize())
     except Order.DoesNotExist:
         return JsonResponse({"error": "Order not found"}, status=404)
     
 @api_view(["PATCH"])
-def toggle_order_ready(request, order_id):
+def toggle_order_ready(request, order_id, business_slug):
+    business = get_business_or_404(business_slug)
     try:
-        order = Order.objects.get(id=order_id)
+        order = Order.objects.get(id=order_id, business=business)
         order.ready = request.data.get("ready", not order.ready)
         order.save()
         return JsonResponse({"message": "Order updated", "ready": order.ready})
@@ -110,9 +124,10 @@ def toggle_order_ready(request, order_id):
         return JsonResponse({"error": "Order not found"}, status=404)
 
 @api_view(["PATCH"])
-def toggle_order_fulfilled(request, order_id):
+def toggle_order_fulfilled(request, order_id, business_slug):
+    business = get_business_or_404(business_slug)
     try:
-        order = Order.objects.get(id=order_id)
+        order = Order.objects.get(id=order_id, business=business)
         order.fulfilled = request.data.get("fulfilled", not order.ready)
         order.save()
         return JsonResponse({"message": "Order updated", "fulfilled": order.fulfilled})
