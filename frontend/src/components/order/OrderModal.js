@@ -5,6 +5,8 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 
+const business_slug = "its-bubblin";
+
 export default function ModalForm() {
   const [show, setShow] = useState(false);
   const [name, setName] = useState("");
@@ -32,7 +34,7 @@ export default function ModalForm() {
     }
 
     try {
-      const res = await placeOrder(name, cart);
+      const res = await placeOrder(name, cart, business_slug);
       const orderId = res.data.order_id;
       localStorage.setItem("activeOrderId", orderId); // For ActiveOrderPage
       alert("Order placed!");

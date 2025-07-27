@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { fetchOrders } from '../services/merchantServices';
+import { getOrders } from '../services/orderServices';
 import LogoutButton from '../components/misc/logoutButton';
 import { OrderItemCard } from '../components/order/OrderItemCard';
 
@@ -17,7 +17,7 @@ export default function MerchantOrders() {
       }
 
       try {
-        const res = await fetchOrders();
+        const res = await getOrders("its-bubblin");
         setOrders(res.data.filter(o => !o.fulfilled));
       } catch (err) {
         console.error("Error fetching orders:", err);

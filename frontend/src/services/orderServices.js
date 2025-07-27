@@ -2,31 +2,31 @@ import axios from 'axios'
 
 const BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000';
 
-export const placeOrder = (studentName, items) => {
-    return axios.post(`${BASE_URL}/api/place-order`, {
+export const placeOrder = (studentName, items, business_slug) => {
+    return axios.post(`${BASE_URL}/${business_slug}/api/place-order/`, {
         student_name: studentName,
         items: items
     });
 };
 
-export const getOrders = () => {
-    return axios.get(`${BASE_URL}/api/orders`);
+export const getOrders = (business_slug) => {
+    return axios.get(`${BASE_URL}/${business_slug}/api/orders`);
 };
 
-export function getOrderById(id) {
+export function getOrderById(id, business_slug) {
   const token = localStorage.getItem("accessToken");
-  return axios.get(`${BASE_URL}/api/orders/${id}/`, {
+  return axios.get(`${BASE_URL}/${business_slug}/api/orders/${id}/`, {
     headers: {
       Authorization: `Bearer ${token}`,
     }
   });
 }
 
-export async function toggleOrderReady(orderId, ready) {
-  return axios.patch(`${BASE_URL}/api/orders/${orderId}/ready/`, { ready });
+export async function toggleOrderReady(orderId, ready, business_slug) {
+  return axios.patch(`${BASE_URL}/${business_slug}/api/orders/${orderId}/ready/`, { ready });
 }
 
-export async function toggleOrderFulfilled(orderId, fulfilled) {
-  return axios.patch(`${BASE_URL}/api/orders/${orderId}/fulfilled/`, { fulfilled });
+export async function toggleOrderFulfilled(orderId, fulfilled, business_slug) {
+  return axios.patch(`${BASE_URL}/${business_slug}/api/orders/${orderId}/fulfilled/`, { fulfilled });
 }
 

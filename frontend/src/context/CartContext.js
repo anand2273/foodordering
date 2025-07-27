@@ -2,6 +2,16 @@ import { createContext, useContext, useState, useEffect } from "react";
 
 export const CartContext = createContext(null);
 
+function generateCartKey(item) {
+  const customKey = item.selectedOptions
+    ? Object.entries(item.selectedOptions)
+        .flatMap(([group, options]) => options.map(o => `${group}:${o.name}`))
+        .join("|")
+    : "";
+
+  return `${item.slug}__${customKey}`;
+}
+
 export function Cart({ children }) {
     const [cart, setCart] = useState(() => {
         const saved = localStorage.getItem("cart");
@@ -12,30 +22,24 @@ export function Cart({ children }) {
     useEffect(() => localStorage.setItem("cart", JSON.stringify(cart)), [cart]);
 
     const addToCart = (item) => {
-        setCart(prev => {
-        const existing = prev.find(i => 
-        i.slug === item.slug &&
-        JSON.stringify(i.selectedOptions) === JSON.stringify(item.selectedOptions)
-        );
+    const key = generateCartKey(item);
 
+    setCart(prev => {
+        const existing = prev.find(i => i.key === key);
         if (existing) {
-        return prev.map(i => 
-            i.slug === item.slug &&
-            JSON.stringify(i.selectedOptions) === JSON.stringify(item.selectedOptions)
-            ? { ...i, quantity: i.quantity + 1 }
-            : i
+        return prev.map(i =>
+            i.key === key ? { ...i, quantity: i.quantity + 1 } : i
         );
-    }
+        }
 
-    return [...prev, { ...item, quantity: 1 }];
-  });
+        return [...prev, { ...item, quantity: 1, key }];
+    });
 
-  alert(`${item.title} added to cart`);
-};
+    alert(`${item.title} added to cart`);
+    };
 
-
-    const removeFromCart = slug => {
-        setCart(prev => prev.filter(i => i.slug !== slug));
+    const removeFromCart = key => {
+        setCart(prev => prev.filter(i => i.key !== key));
     }
 
     const increment = slug => 
