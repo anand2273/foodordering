@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getOrderById } from '../services/orderServices';
+import { getBuyerOrderById } from '../services/orderServices';
 import { OrderItemCard } from '../components/order/OrderItemCard';
 import Navbar from '../components/misc/NavBar';
 
@@ -18,7 +18,7 @@ export default function ActiveOrderPage() {
       }
 
       try {
-        const response = await getOrderById(orderId, business_slug);
+        const response = await getBuyerOrderById(orderId, business_slug);
         if (response.data && response.data.id) {
           if (response.data.fulfilled) {
             localStorage.removeItem("activeOrderId");
