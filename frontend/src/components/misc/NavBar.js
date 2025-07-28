@@ -10,8 +10,8 @@ export default function Navbar() {
     <nav className="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <h1 className="text-2xl font-extrabold text-black-600 tracking-tight font-typewriter">
-            PASTA @RGS
+          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-yellow-500 via-yellow-500 to-yellow-500 bg-clip-text text-transparent text-center">
+            ItsBubblin'🧋
           </h1>
 
           <div className="flex gap-6 relative">

@@ -13,9 +13,13 @@ export const getOrders = (business_slug) => {
     return axios.get(`${BASE_URL}/${business_slug}/api/orders`);
 };
 
-export function getOrderById(id, business_slug) {
-  const token = localStorage.getItem("accessToken");
-  return axios.get(`${BASE_URL}/${business_slug}/api/orders/${id}/`);
+// For buyers (no auth needed)
+export function getBuyerOrderById(id, business_slug) {
+  // For buyer requests, never send any auth headers
+  const url = `${BASE_URL}/${business_slug}/api/orders/${id}/`;
+  console.log("Making buyer request to:", url);
+  
+  return axios.get(url); // No config object at all
 }
 
 export async function toggleOrderReady(orderId, ready, business_slug) {
