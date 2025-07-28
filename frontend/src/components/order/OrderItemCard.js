@@ -32,6 +32,17 @@ export function OrderItemCard({ order, isMerchant = false }) {
       alert("Could not update fulfillment.");
     }
   };
+    const computeOrderTotal = () => {
+    let total = 0;
+    for (const item of order.items) {
+        const base = item.price || 0;
+        const customizations = item.customizations || [];
+        const extra = customizations.reduce((sum, c) => sum + c.extra_cost, 0);
+        const itemTotal = (base + extra) * item.quantity;
+        total += itemTotal;
+    }
+    return total.toFixed(2);
+    };
 
   return (
     <div className="bg-white shadow rounded-lg p-4 mb-4">
@@ -74,6 +85,7 @@ export function OrderItemCard({ order, isMerchant = false }) {
       )}
 
       <div className="mt-4">
+        <p><strong>Total Price:</strong> ${computeOrderTotal()}</p>
         <p className="font-semibold">Items:</p>
         <ul className="list-disc pl-6">
         {order.items.map((item, idx) => (

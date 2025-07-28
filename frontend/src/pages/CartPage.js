@@ -6,7 +6,17 @@ import ModalForm from "../components/order/OrderModal";
 export default function CartPage() {
   const { cart } = useContext(CartContext);
 
-  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const total = cart.reduce((sum, item) => {
+    const base = item.price || 0;
+    const extra =
+        item.selectedOptions
+        ? Object.values(item.selectedOptions)
+            .flat()
+            .reduce((s, opt) => s + (Number(opt.extra_cost) || 0), 0)
+        : 0;
+    return sum + (base + extra) * item.quantity;
+    }, 0);
+
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
