@@ -34,8 +34,6 @@ export function Cart({ children }) {
 
         return [...prev, { ...item, quantity: 1, key }];
     });
-
-    alert(`${item.title} added to cart`);
     };
 
     const removeFromCart = key => {
@@ -59,10 +57,12 @@ export function Cart({ children }) {
     
     const clear = () => setCart([]);
     
+    const totalItemsInCart = cart.reduce((sum, item) => sum + item.quantity, 0);
 
     return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart, increment, decrement, clear }}>
+    <CartContext.Provider value={{ cart, addToCart, removeFromCart, increment, decrement, clear, totalItemsInCart }}>
         {children}
     </CartContext.Provider>
-    )
+    );
+
 }

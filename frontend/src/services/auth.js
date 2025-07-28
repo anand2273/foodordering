@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8000/api/token/';
+const BASE_URL = process.env.REACT_APP_API_BASE_URL
 
 export async function login(username, password) {
   try {
-    const res = await axios.post('http://localhost:8000/api/token/', {
+    const res = await axios.post(`${BASE_URL}/api/token/`, {
       username,
       password,
     });
@@ -12,7 +12,6 @@ export async function login(username, password) {
     const { access, refresh } = res.data;
     localStorage.setItem('accessToken', access);
     localStorage.setItem('refreshToken', refresh);
-    axios.defaults.headers.common['Authorization'] = `Bearer ${access}`;
     return { access, refresh };
   } catch (err) {
     console.error("Login failed:", err.response?.data || err.message);

@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000';
+const BASE_URL = process.env.REACT_APP_API_BASE_URL
 
 export const placeOrder = (studentName, items, business_slug) => {
     return axios.post(`${BASE_URL}/${business_slug}/api/place-order/`, {
@@ -15,11 +15,7 @@ export const getOrders = (business_slug) => {
 
 export function getOrderById(id, business_slug) {
   const token = localStorage.getItem("accessToken");
-  return axios.get(`${BASE_URL}/${business_slug}/api/orders/${id}/`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    }
-  });
+  return axios.get(`${BASE_URL}/${business_slug}/api/orders/${id}/`);
 }
 
 export async function toggleOrderReady(orderId, ready, business_slug) {
