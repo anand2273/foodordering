@@ -11,32 +11,42 @@ export default function ActiveOrderPage() {
 
   useEffect(() => {
     const fetchOrder = async () => {
-      const orderId = localStorage.getItem("activeOrderId");
-      if (!orderId) {
-        setLoading(false);
-        return;
-      }
-
       try {
-        const response = await getBuyerOrderById(orderId, business_slug);
-        if (response.data && response.data.id) {
-          if (response.data.fulfilled) {
-            localStorage.removeItem("activeOrderId");
-            setOrder(null);
-          } else {
-            setOrder(response.data);
-          }
+        const activeOrderId = localStorage.getItem('activeOrderId');
+        
+        if (!activeOrderId) {
+          setOrder(null);
+          setLoading(false);
+          return;
+        }
+
+        const response = await getBuyerOrderById(activeOrderId, business_slug);
+        const orderData = response.data;
+        
+        // If order is fulfilled, remove from localStorage
+        if (orderData.fulfilled) {
+          localStorage.removeItem('activeOrderId');
+          setOrder(null);
         } else {
-          console.warn("Invalid order data:", response.data);
+          setOrder(orderData);
         }
       } catch (err) {
         console.error("Error fetching order:", err);
+        // If order not found, remove from localStorage
+        localStorage.removeItem('activeOrderId');
+        setOrder(null);
       } finally {
         setLoading(false);
       }
     };
 
     fetchOrder();
+
+    // Set up polling to check order status every 30 seconds
+    const interval = setInterval(fetchOrder, 30000);
+    
+    // Cleanup interval on component unmount
+    return () => clearInterval(interval);
   }, []);
 
   return (
