@@ -10,7 +10,7 @@ export const placeOrder = (studentName, items, business_slug) => {
 };
 
 export const getOrders = (business_slug) => {
-    return axios.get(`${BASE_URL}/${business_slug}/api/orders`);
+    return axios.get(`${BASE_URL}/${business_slug}/api/orders/`);
 };
 
 // For buyers (no auth needed)
@@ -19,7 +19,11 @@ export function getBuyerOrderById(id, business_slug) {
   const url = `${BASE_URL}/${business_slug}/api/orders/${id}/`;
   console.log("Making buyer request to:", url);
   
-  return axios.get(url); // No config object at all
+  return axios.get(url, {
+    headers: {
+      Authorization: undefined // Explicitly remove Authorization header
+    }
+  });
 }
 
 export async function toggleOrderReady(orderId, ready, business_slug) {

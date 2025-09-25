@@ -51,6 +51,7 @@ def item(request, slug, business_slug):
 def place_order(request, business_slug):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required."})
+    
     try:
         data = json.loads(request.body)
     except json.JSONDecodeError:
@@ -63,6 +64,7 @@ def place_order(request, business_slug):
         return JsonResponse({"error": "Missing name or items"}, status=400)
 
     business = get_business_or_404(business_slug)
+    
     order = Order.objects.create(student_name=student_name, business=business)
 
     for item in items:
@@ -95,7 +97,7 @@ def place_order(request, business_slug):
         }, status=200)
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def display_orders(request, business_slug):
     business = get_business_or_404(business_slug)
     orders = Order.objects.filter(business=business)
@@ -134,5 +136,4 @@ def toggle_order_fulfilled(request, order_id, business_slug):
     except Order.DoesNotExist:
         return JsonResponse({"error": "Order not found"}, status=404)
 
-    
-        
+

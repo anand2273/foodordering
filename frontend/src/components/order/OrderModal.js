@@ -12,10 +12,14 @@ export default function ModalForm() {
   const [name, setName] = useState("");
   const { cart, clear } = useContext(CartContext);
 
-  const hasActiveOrder = !!localStorage.getItem("activeOrderId");
+  // Check for active orders in localStorage
+  const hasActiveOrder = () => {
+    const activeOrderId = localStorage.getItem('activeOrderId');
+    return activeOrderId !== null;
+  };
 
   const handleOpen = () => {
-    if (hasActiveOrder) {
+    if (hasActiveOrder()) {
       alert("You already have an active order. Please wait until it's fulfilled before placing another.");
       return;
     }
@@ -35,10 +39,12 @@ export default function ModalForm() {
 
     try {
       const res = await placeOrder(name, cart, business_slug);
-      const orderId = res.data.order_id;
-      localStorage.setItem("activeOrderId", orderId); // For ActiveOrderPage
-      alert("Order placed!");
-      clear(); // Optional: clear cart
+      
+      // Store the order ID in localStorage
+      localStorage.setItem('activeOrderId', res.data.order_id);
+      
+      alert("Order placed successfully!");
+      clear(); // Clear cart after successful order
       handleClose();
     } catch (err) {
       console.error("Error placing order:", err);
@@ -48,10 +54,9 @@ export default function ModalForm() {
 
   return (
     <>
-      <Button onClick={handleOpen} disabled={hasActiveOrder}>
+      <Button onClick={handleOpen} disabled={hasActiveOrder()}>
         Place Order
       </Button>
-
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Place Your Order</Modal.Title>
