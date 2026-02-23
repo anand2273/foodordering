@@ -1,16 +1,17 @@
-import pandas as pd
-import os, django
-from order.models import Business, MenuItem, CustomizationGroup, CustomizationOption
-from django.utils.text import slugify
+import os
+import django
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'foodapp.settings')
-os.environ.setdefault('PYTHONPATH', str(BASE_DIR))
 django.setup()
 
+import pandas as pd
+from order.models import Business, MenuItem, CustomizationGroup, CustomizationOption
+from django.utils.text import slugify
+
 DATA_PATH = Path(__file__).resolve().parents[1] / "data" / "menu.xlsx"
-data = pd.read_excel(DATA_PATH)
+data = pd.read_excel(DATA_PATH, sheet_name=None)
 
 
 businesses_df = data["businesses"]

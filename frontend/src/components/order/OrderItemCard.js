@@ -15,7 +15,7 @@ export function OrderItemCard({ order, isMerchant = false }) {
       const res = await toggleOrderReady(order.id, !isReady, business_slug);
       if (isFulfilled && isReady) {
         const res2 = await toggleOrderFulfilled(order.id, !isFulfilled, business_slug);
-        setIsFulfilled(res.data.fulfilled);
+        setIsFulfilled(res2.data.fulfilled);
       }
       setIsReady(res.data.ready);
       
@@ -48,6 +48,7 @@ export function OrderItemCard({ order, isMerchant = false }) {
     <div className="bg-white shadow rounded-lg p-4 mb-4">
       <p><strong>Order ID:</strong> {order.id.slice(0, 4).toUpperCase()}</p>
       <p><strong>Student:</strong> {order.student_name}</p>
+      <p><strong>Location:</strong> {order.location || "—"}</p>
       <p><strong>Timestamp:</strong> {new Date(order.timestamp).toLocaleString()}</p>
       <p>
         <strong>Status:</strong>{" "}
