@@ -42,13 +42,13 @@ export function CartItemCard({ item }) {
 
         <div className="flex gap-2 mt-4">
           <button
-            onClick={() => increment(item.slug)}
+            onClick={() => increment(item.key)}
             className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition"
           >
             +1
           </button>
           <button
-            onClick={() => decrement(item.slug)}
+            onClick={() => decrement(item.key)}
             className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 transition"
           >
             -1

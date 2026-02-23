@@ -18,7 +18,6 @@ export function Cart({ children }) {
         return saved ? JSON.parse(saved) : [];
     });
 
-    console.log("Cart contents: ", cart);
     useEffect(() => localStorage.setItem("cart", JSON.stringify(cart)), [cart]);
 
     const addToCart = (item) => {
@@ -40,17 +39,17 @@ export function Cart({ children }) {
         setCart(prev => prev.filter(i => i.key !== key));
     }
 
-    const increment = slug => 
-        setCart(prev => 
-            prev.map(i => 
-                i.slug === slug ? {...i, quantity: i.quantity + 1} : i
+    const increment = key =>
+        setCart(prev =>
+            prev.map(i =>
+                i.key === key ? {...i, quantity: i.quantity + 1} : i
             )
         )
 
-    const decrement = slug => 
-        setCart(prev => 
-            prev.map(i => 
-                i.slug === slug ? {...i, quantity: i.quantity - 1} : i
+    const decrement = key =>
+        setCart(prev =>
+            prev.map(i =>
+                i.key === key ? {...i, quantity: i.quantity - 1} : i
             )
             .filter(i => i.quantity > 0)
         );

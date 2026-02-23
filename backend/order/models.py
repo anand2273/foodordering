@@ -70,6 +70,13 @@ class CustomizationOption(models.Model):
     def __str__(self):
         return self.name
 
+class Location(models.Model):
+    name = models.CharField(max_length=100)
+    business = models.ForeignKey(Business, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
+
 class Order(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     student_name = models.CharField(max_length=100)
@@ -77,6 +84,7 @@ class Order(models.Model):
     ready = models.BooleanField(default=False)
     fulfilled = models.BooleanField(default=False)
     business = models.ForeignKey(Business, on_delete=models.CASCADE)
+    location = models.ForeignKey(Location, on_delete=models.SET_NULL, null=True, blank=True)
 
     def serialize(self):
         return {
@@ -85,7 +93,8 @@ class Order(models.Model):
             "timestamp": self.timestamp.isoformat(),
             "items": [item.serialize() for item in self.items.all()],
             "ready": self.ready,
-            "fulfilled": self.fulfilled
+            "fulfilled": self.fulfilled,
+            "location": self.location.name if self.location else None
         }
 
 class OrderItem(models.Model):

@@ -9,6 +9,8 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
     # API Routes
+    path("<slug:business_slug>/api/locations/", views.api_locations, name="api_locations"),
+    path("<slug:business_slug>/api/locations/<int:location_id>/fulfill/", views.fulfill_location, name="fulfill_location"),
     path("<slug:business_slug>/api/menu/", views.api_menu, name="api_menu"),
     path("<slug:business_slug>/api/menu-item/<slug:slug>/", views.item, name="item"),
     path("<slug:business_slug>/api/place-order/", views.place_order, name="place_order"),
