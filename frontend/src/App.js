@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import MenuPage from './pages/MenuPage';
 import MenuItemPage from './pages/MenuItemPage';
 import CartPage from "./pages/CartPage";
@@ -29,10 +29,7 @@ function LayoutWithNavbar({ children }) {
 
 
 function AppRoutes() {
-  const location = useLocation();
   const { isMerchantLoggedIn } = useAuth();
-
-  const isMerchantRoute = location.pathname.startsWith("/merchant");
 
   return (
     <Routes>

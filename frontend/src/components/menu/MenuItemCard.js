@@ -28,7 +28,7 @@ export function MenuItemDetail({ item }) {
       extra += Number(option.extra_cost);
     });
     setTotalPrice((Number(item.price) + extra).toFixed(2));
-  }, [selectedOptions]);
+  }, [selectedOptions, item.price]);
 
   return (
     <div className="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow">

@@ -1,6 +1,3 @@
-import { useContext } from "react";
-import { Link } from "react-router-dom";
-import { CartContext } from "../../context/CartContext";
 import { useState } from 'react';
 import { toggleOrderFulfilled, toggleOrderReady } from '../../services/orderServices';
 
