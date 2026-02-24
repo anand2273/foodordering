@@ -9,7 +9,9 @@ def assign_business_to_locations(apps, schema_editor):
         business = Business.objects.get(slug='its-bubblin')
         Location.objects.filter(business__isnull=True).update(business=business)
     except Business.DoesNotExist:
-        pass
+        # Fresh database — no business exists yet. Remove orphaned locations;
+        # they will be recreated when load_menu.py is run.
+        Location.objects.filter(business__isnull=True).delete()
 
 
 class Migration(migrations.Migration):
