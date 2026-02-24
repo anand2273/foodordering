@@ -16,6 +16,8 @@ def assign_business_to_locations(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
+    atomic = False
+
     dependencies = [
         ('order', '0006_location_business_nullable'),
     ]
