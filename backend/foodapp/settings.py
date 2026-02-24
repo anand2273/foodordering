@@ -36,6 +36,7 @@ ALLOWED_HOSTS = ['192.168.1.14', '127.0.0.1'] + [h for h in _extra_hosts.split('
 INSTALLED_APPS = [
     'order',
     'corsheaders',
+    'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
