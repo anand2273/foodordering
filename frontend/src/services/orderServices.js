@@ -1,6 +1,9 @@
 import axios from 'axios'
 
-const BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000"
+const BASE_URL = (process.env.REACT_APP_API_BASE_URL || "http://localhost:8000").replace(/\/+$/, "")
+
+// Separate axios instance for buyer/checkout flows so we never attach merchant JWTs.
+const buyerAxios = axios.create();
 
 // Attach JWT token to all requests if present
 axios.interceptors.request.use((config) => {
@@ -23,6 +26,21 @@ export const placeOrder = (studentName, items, location_id, business_slug) => {
     });
 };
 
+// Buyer checkout: creates an Order in requires_payment + returns Stripe client_secret.
+export const createPaymentIntent = (studentName, items, location_id, business_slug, idempotencyKey) => {
+  const headers = {};
+  if (idempotencyKey) headers["Idempotency-Key"] = idempotencyKey;
+  return buyerAxios.post(
+    `${BASE_URL}/${business_slug}/api/checkout/create-payment-intent/`,
+    {
+      student_name: studentName,
+      items: items,
+      location_id: location_id,
+    },
+    { headers }
+  );
+};
+
 export const getOrders = (business_slug, location_id = null) => {
     let url = `${BASE_URL}/${business_slug}/api/orders/`;
     if (location_id) {
@@ -37,13 +55,8 @@ export const fulfillLocation = (location_id, business_slug) => {
 
 // For buyers (no auth needed)
 export function getBuyerOrderById(id, business_slug) {
-  // For buyer requests, never send any auth headers
   const url = `${BASE_URL}/${business_slug}/api/orders/${id}/`;
-  return axios.get(url, {
-    headers: {
-      Authorization: undefined // Explicitly remove Authorization header
-    }
-  });
+  return buyerAxios.get(url);
 }
 
 export async function toggleOrderReady(orderId, ready, business_slug) {

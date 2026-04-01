@@ -78,6 +78,13 @@ class Location(models.Model):
         return self.name
 
 class Order(models.Model):
+    class PaymentStatus(models.TextChoices):
+        REQUIRES_PAYMENT = "requires_payment", "Requires payment"
+        PROCESSING = "processing", "Processing"
+        PAID = "paid", "Paid"
+        FAILED = "failed", "Failed"
+        CANCELED = "canceled", "Canceled"
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     student_name = models.CharField(max_length=100)
     timestamp = models.DateTimeField(default=timezone.now)
@@ -85,6 +92,17 @@ class Order(models.Model):
     fulfilled = models.BooleanField(default=False)
     business = models.ForeignKey(Business, on_delete=models.CASCADE)
     location = models.ForeignKey(Location, on_delete=models.SET_NULL, null=True, blank=True)
+
+    currency = models.CharField(max_length=3, default="sgd")
+    amount_total = models.PositiveIntegerField(default=0, help_text="Total amount in the smallest currency unit (e.g. cents).")
+    payment_status = models.CharField(
+        max_length=20,
+        choices=PaymentStatus.choices,
+        default=PaymentStatus.REQUIRES_PAYMENT,
+    )
+    stripe_payment_intent_id = models.CharField(max_length=255, null=True, blank=True, unique=True)
+    checkout_idempotency_key = models.CharField(max_length=255, null=True, blank=True, unique=True)
+    paid_at = models.DateTimeField(null=True, blank=True)
 
     def serialize(self):
         return {
@@ -94,7 +112,10 @@ class Order(models.Model):
             "items": [item.serialize() for item in self.items.all()],
             "ready": self.ready,
             "fulfilled": self.fulfilled,
-            "location": self.location.name if self.location else None
+            "location": self.location.name if self.location else None,
+            "currency": self.currency,
+            "amount_total": self.amount_total,
+            "payment_status": self.payment_status,
         }
 
 class OrderItem(models.Model):

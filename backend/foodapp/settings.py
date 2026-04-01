@@ -60,7 +60,12 @@ MIDDLEWARE = [
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = False
 _extra_origins = os.environ.get('CORS_ALLOWED_ORIGINS', '')
-CORS_ALLOWED_ORIGINS = ['http://localhost:3000'] + [o for o in _extra_origins.split(',') if o]
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://127.0.0.1:3000',
+    'http://127.0.0.1:3001',
+] + [o for o in _extra_origins.split(',') if o]
 
 ROOT_URLCONF = 'foodapp.urls'
 
@@ -149,3 +154,8 @@ SIMPLE_JWT = {
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
 }
+
+# Stripe
+STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY", "")
+STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
+STRIPE_CURRENCY = os.environ.get("STRIPE_CURRENCY", "sgd")
