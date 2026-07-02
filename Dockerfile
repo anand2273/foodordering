@@ -6,12 +6,16 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-COPY pyproject.toml requirements.lock ./
+RUN addgroup --system app && adduser --system --ingroup app app
+
+COPY --chown=app:app pyproject.toml requirements.lock ./
 RUN pip install -r requirements.lock
 
-COPY backend ./backend
+COPY --chown=app:app backend ./backend
 WORKDIR /app/backend
 
 RUN python manage.py collectstatic --noinput
+
+USER app
 
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "--access-logfile", "-", "foodapp.wsgi:application"]
