@@ -1,6 +1,22 @@
 import { AxiosError, type AxiosRequestConfig } from "axios";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { api, apiErrorMessage } from "./client";
+
+describe("baseURL guard", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.resetModules();
+  });
+
+  it("throws when VITE_API_BASE_URL is missing outside dev mode", async () => {
+    vi.stubEnv("VITE_API_BASE_URL", "");
+    vi.stubEnv("DEV", false);
+    vi.resetModules();
+    await expect(import("./client")).rejects.toThrow(
+      "VITE_API_BASE_URL must be set in production.",
+    );
+  });
+});
 
 describe("apiErrorMessage", () => {
   it("uses the structured API message when available", () => {
