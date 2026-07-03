@@ -1,13 +1,20 @@
 import axios, { AxiosError } from "axios";
 import type { ApiErrorBody } from "../types";
 
-const rawBaseURL = import.meta.env.VITE_API_BASE_URL as string | undefined;
-
-if (!rawBaseURL && !import.meta.env.DEV) {
-  throw new Error("VITE_API_BASE_URL must be set in production.");
+export function resolveBaseURL(
+  raw: string | undefined,
+  isDev: boolean,
+): string {
+  if (!raw && !isDev) {
+    throw new Error("VITE_API_BASE_URL must be set in production.");
+  }
+  return raw ?? "http://localhost:8000/api/v1";
 }
 
-const baseURL = rawBaseURL ?? "http://localhost:8000/api/v1";
+const baseURL = resolveBaseURL(
+  import.meta.env.VITE_API_BASE_URL as string | undefined,
+  import.meta.env.DEV,
+);
 
 export const api = axios.create({
   baseURL: baseURL.replace(/\/+$/, ""),
