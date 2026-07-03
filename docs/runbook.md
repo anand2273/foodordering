@@ -10,6 +10,20 @@ Required production configuration is documented in `.env.example`. The API and
 worker must share the same `SECRET_KEY`, database, and Redis instance. Use sibling
 custom domains for the frontend and API and restrict CORS/CSRF to the frontend.
 
+Deploy order:
+
+1. Deploy `foodapp-api` to Render via `render.yaml`/`Dockerfile`, and set its
+   `sync: false` env vars in the Render dashboard (`SECRET_KEY`, `ALLOWED_HOSTS`,
+   `CORS_ALLOWED_ORIGINS`, `CSRF_TRUSTED_ORIGINS`, `PUBLIC_APP_URL`,
+   `STRIPE_SECRET_KEY`, etc.).
+2. Note the resulting service URL, e.g. `https://foodapp-api.onrender.com`.
+3. In the Vercel project's Production environment variables, set
+   `VITE_API_BASE_URL=https://foodapp-api.onrender.com/api/v1` and
+   `VITE_STRIPE_PUBLISHABLE_KEY`. `vite.config.ts` fails the build if
+   `VITE_API_BASE_URL` is missing, so a frontend deploy without it will not ship.
+4. Redeploy the frontend on Vercel — Vite inlines these vars at build time, so
+   changing them requires a fresh build.
+
 ## Health and alerts
 
 - `/api/v1/health/live/`: process is serving requests.
