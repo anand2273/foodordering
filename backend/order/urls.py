@@ -1,23 +1,31 @@
 from django.urls import path
+
 from . import views
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from uuid import UUID
+
+app_name = "order"
 
 urlpatterns = [
-    # Merchant Side
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-
-    # API Routes
-    path("<slug:business_slug>/api/locations/", views.api_locations, name="api_locations"),
-    path("<slug:business_slug>/api/locations/<int:location_id>/fulfill/", views.fulfill_location, name="fulfill_location"),
-    path("<slug:business_slug>/api/menu/", views.api_menu, name="api_menu"),
-    path("<slug:business_slug>/api/menu-item/<slug:slug>/", views.item, name="item"),
-    path("<slug:business_slug>/api/place-order/", views.place_order, name="place_order"),
-    path("<slug:business_slug>/api/checkout/create-payment-intent/", views.create_payment_intent, name="create_payment_intent"),
-    path("api/stripe/webhook/", views.stripe_webhook, name="stripe_webhook"),
-    path("<slug:business_slug>/api/orders/", views.display_orders, name="display_orders"),
-    path("<slug:business_slug>/api/orders/<uuid:order_id>/", views.get_order_by_id, name="get_order_by_id"),
-    path("<slug:business_slug>/api/orders/<uuid:order_id>/ready/", views.toggle_order_ready, name="toggle_order_ready"),
-    path("<slug:business_slug>/api/orders/<uuid:order_id>/fulfilled/", views.toggle_order_fulfilled, name="toggle_order_fulfilled"),
+    path("menu-items/", views.MenuListView.as_view(), name="menu-list"),
+    path("menu-items/<slug:slug>/", views.MenuDetailView.as_view(), name="menu-detail"),
+    path("locations/", views.LocationListView.as_view(), name="location-list"),
+    path("checkouts/", views.CheckoutView.as_view(), name="checkout"),
+    path("order-status/", views.CustomerOrderView.as_view(), name="order-status"),
+    path("auth/csrf/", views.CsrfView.as_view(), name="csrf"),
+    path("auth/login/", views.LoginView.as_view(), name="login"),
+    path("auth/session/", views.SessionView.as_view(), name="session"),
+    path("auth/logout/", views.LogoutView.as_view(), name="logout"),
+    path("merchant/orders/", views.MerchantOrderListView.as_view(), name="merchant-orders"),
+    path(
+        "merchant/orders/<uuid:order_id>/status/",
+        views.MerchantOrderStatusView.as_view(),
+        name="merchant-order-status",
+    ),
+    path(
+        "merchant/locations/<int:location_id>/fulfill-ready/",
+        views.FulfillReadyOrdersView.as_view(),
+        name="fulfill-ready-orders",
+    ),
+    path("webhooks/stripe/", views.StripeWebhookView.as_view(), name="stripe-webhook"),
+    path("health/live/", views.LiveHealthView.as_view(), name="health-live"),
+    path("health/ready/", views.ReadyHealthView.as_view(), name="health-ready"),
 ]

@@ -1,0 +1,94 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: foodapp
+          POSTGRES_USER: foodapp
+          POSTGRES_PASSWORD: foodapp
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U foodapp"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+      redis:
+        image: redis:7
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://foodapp:foodapp@localhost:5432/foodapp
+      REDIS_URL: redis://localhost:6379/0
+      SECRET_KEY: ci-only-secret
+      CELERY_TASK_ALWAYS_EAGER: "true"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: pip install -r requirements-dev.lock
+      - run: ruff format --check backend
+      - run: ruff check backend
+      - run: mypy backend
+      - run: pip-audit
+      - run: python backend/manage.py makemigrations --check --dry-run
+      - run: python backend/manage.py migrate --noinput
+      - run: coverage run backend/manage.py test order
+      - run: coverage report
+      - name: Production deployment checks
+        env:
+          ENVIRONMENT: production
+          ALLOWED_HOSTS: api.example.com
+          CORS_ALLOWED_ORIGINS: https://app.example.com
+          CSRF_TRUSTED_ORIGINS: https://app.example.com
+          SENDGRID_API_KEY: test
+        run: python backend/manage.py check --deploy
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm audit --audit-level=high
+      - run: npm run lint
+      - run: npx prettier --check .
+      - run: npm test
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,80 @@
+[project]
+name = "foodapp"
+version = "1.0.0"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+  "celery[redis]==5.5.3",
+  "cryptography==48.0.1",
+  "dj-database-url==3.1.2",
+  "Django==5.2.15",
+  "django-anymail[sendgrid]==13.0",
+  "django-cors-headers==4.7.0",
+  "django-environ==0.12.0",
+  "djangorestframework==3.16.0",
+  "gunicorn==25.1.0",
+  "psycopg[binary]==3.2.9",
+  "python-json-logger==3.3.0",
+  "requests==2.33.0",
+  "sentry-sdk[django]==2.30.0",
+  "stripe==12.4.0",
+  "idna==3.15",
+  "sqlparse==0.5.4",
+  "urllib3==2.7.0",
+  "whitenoise==6.11.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "coverage[toml]==7.9.1",
+  "django-stubs[compatible-mypy]==5.2.1",
+  "mypy==1.16.1",
+  "pip-audit==2.10.1",
+  "pip-tools==7.5.3",
+  "ruff==0.12.0",
+]
+
+[tool.setuptools]
+packages = []
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "DJ"]
+ignore = ["DJ001"]
+
+[tool.ruff.lint.per-file-ignores]
+"backend/order/migrations/*.py" = ["E501"]
+
+[tool.mypy]
+python_version = "3.12"
+mypy_path = "backend"
+plugins = ["mypy_django_plugin.main"]
+check_untyped_defs = true
+disallow_untyped_defs = true
+ignore_missing_imports = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+exclude = [
+  "backend/manage.py",
+  "backend/order/migrations/",
+  "backend/order/tests/",
+]
+
+[tool.django-stubs]
+django_settings_module = "foodapp.settings"
+
+[tool.coverage.run]
+source = ["backend"]
+omit = [
+  "*/migrations/*",
+  "*/tests/*",
+  "*/asgi.py",
+  "*/wsgi.py",
+  "*/manage.py",
+]
+
+[tool.coverage.report]
+fail_under = 80
+show_missing = true

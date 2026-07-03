@@ -1,1 +1,0 @@
-web: gunicorn foodapp.wsgi:application

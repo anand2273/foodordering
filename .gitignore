@@ -11,6 +11,11 @@ venv/
 
 # Django secrets
 .env
+.env.*
+!.env.example
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
 
 # VSCode or IDEs
 .vscode/
@@ -21,6 +26,8 @@ node_modules/
 frontend/node_modules/
 frontend/build/
 frontend/dist/
+frontend/playwright-report/
+frontend/test-results/
 
 # React build artifacts (if built inside frontend)
 *.cache
@@ -40,6 +47,14 @@ coverage.*
 *.py,cover
 .cache
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+*.tsbuildinfo
+*.egg-info/
 
 # Jupyter / temp notebooks (if used)
 *.ipynb_checkpoints
+
+# Runtime state
+celerybeat-schedule
