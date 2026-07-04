@@ -1,6 +1,18 @@
 import axios, { AxiosError } from "axios";
 import type { ApiErrorBody } from "../types";
 
+function normalizeApiBaseURL(raw: string): string {
+  const url = new URL(raw);
+  const parts = url.pathname.split("/").filter(Boolean);
+  const apiIndex = parts.lastIndexOf("api");
+
+  if (apiIndex >= 0 && parts[apiIndex + 1] === "v1") {
+    url.pathname = `/${parts.slice(0, apiIndex + 2).join("/")}`;
+  }
+
+  return url.toString().replace(/\/+$/, "");
+}
+
 export function resolveBaseURL(
   raw: string | undefined,
   isDev: boolean,
@@ -8,7 +20,7 @@ export function resolveBaseURL(
   if (!raw && !isDev) {
     throw new Error("VITE_API_BASE_URL must be set in production.");
   }
-  return raw ?? "http://localhost:8000/api/v1";
+  return raw ? normalizeApiBaseURL(raw) : "http://localhost:8000/api/v1";
 }
 
 const baseURL = resolveBaseURL(
